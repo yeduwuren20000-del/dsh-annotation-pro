@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build / test residue
+coverage/
+*.log
+*.tsbuildinfo
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# local backups of source during editing
+*.bak
+*.bak-*
+*.orig
+*.rej
+
+# local-only files that should never ship
+probe.txt
+*.tmp
