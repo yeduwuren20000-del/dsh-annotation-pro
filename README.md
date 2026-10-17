@@ -74,6 +74,27 @@ $DSH_HOME/profiles/<profile>/.dsh-annotation-pro/<sessionId>.json
 输入框里的编号是**纯 CSS 计数器**（`counter-increment` + `::before`），不写进草稿文本，
 所以复制、撤销、粘贴都不会把序号带进去，序号也永远和实际顺序一致。
 
+### 为什么滚动时不卡
+
+批注高亮是**固定定位**的浮层，每帧都要知道原文矩形。0.2.0 里这一步是这么做的：
+每条批注各自去全文档找一遍 ROW、沿着祖先链逐层 `getComputedStyle`、再用
+`indexOf` 做一次全文搜索 —— 成本是「批注数 × 行数 × 文本长度」，长回复里滚一下就是几十毫秒。
+
+0.2.1 换成三层缓存：
+
+| 层 | 做法 | 效果 |
+|---|---|---|
+| 布局快照 | 每帧只做一次 `querySelectorAll` + `getBoundingClientRect` / `getComputedStyle`，按元素记忆化 | 样式调用数与批注数无关（12 条批注和 2 条一样是 5 次） |
+| Range 复用 | 解析出的 DOM Range 直接留着用；Range 是**活的**，DOM 变了会自己跟着走 | 滚动时不再做任何全文搜索 |
+| 视口过滤 | 只测量与视口相交的行 | 长会话里成本与「当前可见的批注数」成正比 |
+
+另外把 `MutationObserver` / `ResizeObserver` / `scroll` 监听**只在挂载时建立一次**：
+0.2.0 把这些依赖挂在 `state.draft`、`state.pending` 上，而这两个对象每次 store 更新都是新引用，
+于是**每敲一个字**都要拆掉重建整个观察器树并重新 `querySelectorAll`。
+
+选择文本也不再逐帧处理：拖动期间（`pointerdown` → `pointerup`）不响应 `selectionchange`，
+只在一帧内读一次，避免长回复里拖选时掉帧。
+
 ## 回归自检
 
 ```bash
