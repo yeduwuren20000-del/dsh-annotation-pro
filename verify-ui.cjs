@@ -44,21 +44,19 @@ check('user messages are annotatable', src.includes('data-chat-flow-kind="user"'
 check('both flow kinds share one root selector', /const ROW = '[^']*assistant-step[^']*[^']*user[^']*'/.test(src));
 
 // ---- mascot ----
-check('mascot rendered as inline svg', src.includes("className: 'an-chibi'") && src.includes('dangerouslySetInnerHTML'));
-check('gradients live in one shared sprite', src.includes("id = 'dsh-annotation-pro-sprite'") && (src.match(/id="an-hair"/g) || []).length === 1);
-check('sprite is cleaned up on dispose', src.includes("getElementById('dsh-annotation-pro-sprite')?.remove()"));
-check('both eyes are drawn', src.includes('chibiEye(30.4)') && src.includes('chibiEye(49.6)'));
-check('small copies crop to the face', src.includes("size >= 44 ? '0 0 80 80' : '11 13 58 58'"));
-check('headband is a real frill', src.includes('for (let i = 0; i < 13; i++)'));
-check('blink fully hides the lid', /@keyframes an-blink\{0%,92%\{transform:scaleY\(0\)\}/.test(css));
-const still = ['an-sway', 'an-ahoge', 'an-breathe', 'an-blink', 'an-yay'];
+check('mascot is one inlined bitmap', /const CHIBI_SRC = 'data:image\/webp;base64,[A-Za-z0-9+/=]{4000,}'/.test(src));
+check('mascot is not an svg any more', !src.includes("className: 'an-chibi', viewBox"));
+check('mascot is decorative', src.includes("alt: ''") && src.includes("'aria-hidden': true"));
+check('mascot cannot be dragged out', src.includes('draggable: false'));
+check('mascot has no external asset reference', !/[\"'(](\.\/|\/)?assets\//.test(src));
+const still = ['an-breathe', 'an-yay'];
 for (const name of still) {
   const block = css.match(new RegExp('@keyframes ' + name + '\\{([\\s\\S]*?)\\}'));
   check('keyframe ' + name + ' animates transform only',
     !!block && !/(^|[;{])\s*(opacity|background|filter|box-shadow|top|left|width|height)\s*:/.test(block[1]),
     block ? 'has layout/paint props' : 'missing');
 }
-check('reduced motion stops the mascot', css.includes('.an-chibi *{animation:none!important'));
+check('reduced motion stops the mascot', css.includes('.an-chibi{animation:none!important'));
 
 check('24000 maxLength kept', src.includes('maxLength: 24000'));
 
