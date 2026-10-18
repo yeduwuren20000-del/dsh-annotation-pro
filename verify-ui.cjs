@@ -69,7 +69,7 @@ check('mascot is not an svg any more', !src.includes("className: 'an-chibi', vie
 check('mascot is decorative', src.includes("alt: ''") && src.includes("'aria-hidden': true"));
 check('mascot cannot be dragged out', src.includes('draggable: false'));
 check('mascot has no external asset reference', !/[\"'(](\.\/|\/)?assets\//.test(src));
-const still = ['an-breathe', 'an-yay'];
+const still = ['an-breathe', 'an-yay', 'an-happy', 'an-think'];
 for (const name of still) {
   const block = css.match(new RegExp('@keyframes ' + name + '\\{([\\s\\S]*?)\\}'));
   check('keyframe ' + name + ' animates transform only',
@@ -89,11 +89,15 @@ check('selection bubble has a gold border', css.includes('border:1px solid #e5c4
 check('selection bubble seal has a gold rim', /box-shadow:[^;}]*0 0 0 1\.5px #efce92/.test(css));
 
 // ---- popover carries the mascot dialog skin (v0.7.2) ----
-check('add/edit popover shows the mascot', src.includes("className: 'an-mascot rev'") && src.includes("h(chibi, { size: 38"));
-check('mascot stands on the right of the row', css.includes('.an-mascot.rev{flex-direction:row-reverse}'));
-check('bubble tail follows her to the right', css.includes('.an-mascot.rev .an-say{border-radius:12px 12px 4px 12px}'));
+check('add/edit popover shows the mascot', src.includes("className: 'an-mascot'") && src.includes("h(chibi, { size: 38"));
+// The top mascot keeps her on the left; only the one beside the textarea sits on the right.
+check('top mascot is not reversed', !src.includes('an-mascot rev') && !css.includes('.an-mascot.rev'));
 check('she stands beside the box you type in', src.includes("className: 'an-write'") && src.includes("h(chibi, { size: 30"));
 check('the input still takes the remaining width', css.includes('.an-write .an-input{margin-top:0;flex:1;min-width:0}'));
+// ---- expressions ----
+check('happy mood is wired to a pose', css.includes('.an-chibi[data-mood="happy"]') && src.includes("mood: state.busy ? 'waiting' : draft.comment.trim() ? 'happy' : 'idle'"));
+check('think mood is wired to a pose', css.includes('.an-chibi[data-mood="think"]') && src.includes("draft.isNew ? 'waiting' : 'think'"));
+check('view card reacts to being queued', src.includes("mood: annotation.queued ? 'happy' : 'idle'"));
 check('add popover mascot greets a new note', src.includes('选中文字后，把想法记下来吧'));
 check('edit popover mascot keeps the passage', src.includes('改一改你的批注，原文会原样保留'));
 check('view popover shows the mascot', src.includes('这是你留下的注释，原文收在下面'));
