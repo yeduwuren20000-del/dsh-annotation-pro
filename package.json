@@ -2,7 +2,8 @@
   "name": "dsh-annotation-pro",
   "displayName": "DSH Annotation Pro",
   "description": "选中任意消息（AI 回复或自己的话）写批注，以「注释 N」编号插入输入框并随消息发送；入口是工具行里的一颗芯片，编号稳定不重排，带二次元看板娘。",
-  "version": "0.6.0",
+  "version": "0.7.0",
+  "icon": "./icon.png",
   "license": "MIT",
   "author": "yeduwuren",
   "homepage": "https://github.com/yeduwuren20000-del/dsh-annotation-pro#readme",
@@ -74,6 +75,7 @@
   "files": [
     "lib",
     "cordis.patch.yml",
+    "icon.png",
     "package.json"
   ]
 }

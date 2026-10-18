@@ -80,6 +80,14 @@ check('reduced motion stops the mascot', css.includes('.an-chibi{animation:none!
 
 check('24000 maxLength kept', src.includes('maxLength: 24000'));
 
+// ---- selection bubble skin (v0.7.0 plaque) ----
+check('selection bubble carries a circular seal', /className:\s*['"]an-seal['"]/.test(src) && /const SEAL_SRC = 'data:image\/webp;base64,[A-Za-z0-9+/=]{1000,}'/.test(src));
+check('selection bubble text is gold-gradient', css.includes('.an-seal-label{background:linear-gradient(180deg,#fff7e2,#eec57f)'));
+check('selection bubble no longer blue-purple pill', !/\.an-selection\{[^}]*linear-gradient\(180deg,#5a77ff,#4257d6\)/.test(css));
+check('selection bubble is a deep plaque', css.includes('background:linear-gradient(180deg,#33569a,#1b2f5e 56%,#122143)'));
+check('selection bubble has a gold border', css.includes('border:1px solid #e5c489'));
+check('selection bubble seal has a gold rim', /box-shadow:[^;}]*0 0 0 1\.5px #efce92/.test(css));
+
 for (const line of ok) console.log('PASS', line);
 for (const line of fail) console.log('FAIL', line);
 console.log(`\n${ok.length} passed, ${fail.length} failed`);
