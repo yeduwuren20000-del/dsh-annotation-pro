@@ -88,6 +88,14 @@ check('selection bubble is a deep plaque', css.includes('background:linear-gradi
 check('selection bubble has a gold border', css.includes('border:1px solid #e5c489'));
 check('selection bubble seal has a gold rim', /box-shadow:[^;}]*0 0 0 1\.5px #efce92/.test(css));
 
+// ---- popover carries the mascot dialog skin (v0.7.2) ----
+check('add/edit popover shows the mascot', src.includes("h('div', { className: 'an-mascot' },") && src.includes("h(chibi, { size: 38"));
+check('add popover mascot greets a new note', src.includes('选中文字后，把想法记下来吧'));
+check('edit popover mascot keeps the passage', src.includes('改一改你的批注，原文会原样保留'));
+check('view popover shows the mascot', src.includes('这是你留下的注释，原文收在下面'));
+check('queued view popover mascot notes the queue', src.includes('这条注释已经排好队'));
+check('popover speech bubble matches the gold skin', css.includes('.an-popover .an-say{background:rgba(229,196,137,.14)'));
+
 for (const line of ok) console.log('PASS', line);
 for (const line of fail) console.log('FAIL', line);
 console.log(`\n${ok.length} passed, ${fail.length} failed`);
