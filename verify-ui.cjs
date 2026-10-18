@@ -39,6 +39,26 @@ check('payload no longer quotes the passage', !src.includes('关于这段回复'
 check('markers print the stored ordinal', src.includes('String(mark.ordinal)'));
 check('dock trigger names the notes', src.includes('`注释 ${ordinals.join(') && !src.includes('条注释`'));
 
+// ---- placement: a chip in the tool row, never a full-width band ----
+check('chip lives in the composer tool row', src.includes("register('conversation.input.left', 'annotation-pro-chip', AnnotationsDock)"));
+check('nothing claims the full-width dock any more', !src.includes("'conversation.input.dock'"));
+check('the old band class is gone', !css.includes('.an-dock{') && !css.includes('an-collapse'));
+// `[;{]width:100%` and not `width:100%`, or `max-width:100%` would read as a full-width bar.
+check('chip row is inline, not a bar', /\.an-chipbar\{[^}]*display:inline-flex/.test(css) && !/\.an-chipbar\{[^}]*[;{]width:100%/.test(css));
+check('chip label truncates instead of wrapping', /\.an-chip-label\{[^}]*text-overflow:ellipsis/.test(css) && /\.an-chip-label\{[^}]*white-space:nowrap|\.an-chip\{[^}]*white-space:nowrap/.test(css));
+check('panel floats above the composer', /\.an-dockpanel\{[^}]*position:fixed/.test(css));
+check('panel is pinned upward from the anchor', src.includes('window.innerHeight - clearance + 8'));
+check('panel is clamped into the viewport', src.includes('Math.max(12, Math.min(chipRect.left, window.innerWidth - width - 12))'));
+check('panel is portalled out of the composer', src.includes('reactDom.createPortal(panel, document.body)'));
+check('panel re-places on scroll and resize', src.includes("window.addEventListener('resize', place)") && src.includes("window.addEventListener('scroll', place, true)"));
+check('panel clears the whole input area', src.includes('surface.editorRect?.()') && src.includes('clearance = editorRect.top'));
+check('composer card is the preferred floor', src.includes("closest?.('[data-composer-card]')") && src.includes('clearance = cardRect.top'));
+check('panel height fits the room above it', src.includes('maxHeight: `${anchor.maxHeight}px`') && src.includes('Math.min(560, clearance - 24)'));
+check('editor lookup cannot throw', src.includes('editorRect() {') && /editorRect\(\) \{[\s\S]{0,160}catch/.test(src));
+check('panel closes on outside press', src.includes("document.addEventListener('pointerdown', away, true)"));
+check('panel closes on escape', src.includes("event.key === 'Escape'"));
+check('panel width is bounded', /\.an-dockpanel\{[^}]*max-height:min\(62vh/.test(css));
+
 // ---- selection scope ----
 check('user messages are annotatable', src.includes('data-chat-flow-kind="user"'));
 check('both flow kinds share one root selector', /const ROW = '[^']*assistant-step[^']*[^']*user[^']*'/.test(src));
