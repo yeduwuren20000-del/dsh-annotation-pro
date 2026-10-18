@@ -6,7 +6,7 @@ const css = src.slice(start, end);
 const fail = [];
 const ok = [];
 
-const check = (name, cond, detail = '') => (cond ? ok : fail).push(name + (detail ? ` (${detail})` : ''));
+const check = (name, cond, detail = '') => (cond ? ok : fail).push(cond || !detail ? name : `${name} (${detail})`);
 
 check('counter rule present', (css.match(/counter-increment:an-note/g) || []).length === 1);
 check('counter used once', (css.match(/counter\(an-note\)/g) || []).length === 1);
@@ -27,6 +27,22 @@ check('dsw vars all have fallback', dsUsed.size > 0);
 let depth = 0;
 for (const ch of css) { if (ch === '{') depth++; else if (ch === '}') depth--; }
 check('css braces balanced', depth === 0, `depth=${depth}`);
+
+
+// ---- mascot ----
+check('mascot rendered as inline svg', src.includes("className: 'an-chibi'") && src.includes('dangerouslySetInnerHTML'));
+check('gradients live in one shared sprite', src.includes("id = 'dsh-annotation-pro-sprite'") && (src.match(/id="an-hair"/g) || []).length === 1);
+check('sprite is cleaned up on dispose', src.includes("getElementById('dsh-annotation-pro-sprite')?.remove()"));
+check('both eyes are drawn', src.includes('chibiEye(29.4)') && src.includes('chibiEye(50.6)'));
+check('small copies crop to the face', src.includes("size >= 44 ? '0 0 80 80' : '10 8 60 60'"));
+const still = ['an-sway', 'an-ahoge', 'an-breathe', 'an-blink', 'an-yay'];
+for (const name of still) {
+  const block = css.match(new RegExp('@keyframes ' + name + '\\{([\\s\\S]*?)\\}'));
+  check('keyframe ' + name + ' animates transform only',
+    !!block && !/(^|[;{])\s*(opacity|background|filter|box-shadow|top|left|width|height)\s*:/.test(block[1]),
+    block ? 'has layout/paint props' : 'missing');
+}
+check('reduced motion stops the mascot', css.includes('.an-chibi *{animation:none!important'));
 
 check('24000 maxLength kept', src.includes('maxLength: 24000'));
 

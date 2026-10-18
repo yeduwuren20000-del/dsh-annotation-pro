@@ -1,8 +1,8 @@
 {
   "name": "dsh-annotation-pro",
   "displayName": "DSH Annotation Pro",
-  "description": "选中 AI 回复写批注，以带编号的注释块插入输入框并随消息发送；支持编辑、移除、单独保存与原文定位。",
-  "version": "0.2.1",
+  "description": "选中 AI 回复写批注，以带编号的注释块插入输入框并随消息发送；带二次元看板娘与全新视觉。",
+  "version": "0.3.0",
   "license": "MIT",
   "author": "yeduwuren",
   "homepage": "https://github.com/yeduwuren20000-del/dsh-annotation-pro#readme",
